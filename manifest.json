@@ -1,0 +1,10 @@
+{
+	"id": "find-zero-md-cleaner",
+	"name": "FindZero - MD Cleaner",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Scan your vault for unnecessary markdown files and delete them easily.",
+	"author": "jmi2020",
+	"authorUrl": "https://github.com/jmi2020/",
+	"isDesktopOnly": false
+}
