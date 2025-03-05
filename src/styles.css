@@ -1,0 +1,113 @@
+.file-list-container {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 1rem;
+}
+
+.file-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.8rem;
+  border-bottom: 1px solid var(--background-modifier-border);
+  position: relative;
+}
+
+.file-info {
+  margin-bottom: 0.25rem;
+  word-break: break-word;
+  flex-grow: 1;
+}
+
+.file-path {
+  opacity: 0.7;
+  font-size: 0.85em;
+}
+
+.button-container {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.file-action-button {
+  padding: 4px 8px;
+  background-color: var(--interactive-normal);
+  border: none;
+  border-radius: 4px;
+  color: var(--text-normal);
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.file-action-button:hover {
+  background-color: var(--interactive-hover);
+}
+
+.file-details {
+  font-size: 0.8em;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+  font-style: italic;
+}
+
+/* Styling for the ribbon icon */
+.md-cleaner-ribbon-class:hover {
+  color: var(--interactive-accent);
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Selection indicator styling */
+.selection-indicator {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.selection-icon {
+  font-size: 18px;
+  margin-right: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+.selection-icon:hover {
+  color: var(--interactive-accent);
+}
+
+.selection-icon.is-selected {
+  color: var(--interactive-accent);
+}
+
+/* Select All container styling */
+.select-all-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.select-all-container span {
+  margin-left: 4px;
+  user-select: none;
+}
+
+/* Batch actions styling */
+.batch-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: var(--background-secondary);
+  border-radius: 4px;
+}
