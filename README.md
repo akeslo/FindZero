@@ -67,7 +67,7 @@ This plugin is built using TypeScript and the Obsidian API.
 1. Clone this repository
 2. Install dependencies with `npm install`
 3. Build the plugin with `npm run build`
-4. Copy `main.js` and `manifest.json` to your test vault's plugins folder
+4. Copy `main.js` and `manifest.json` and `styles.css` to your test vault's plugins folder
 
 ### Contribution
 

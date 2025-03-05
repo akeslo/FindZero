@@ -1,0 +1,14 @@
+# Dependency directories
+node_modules/
+
+# Build outputs
+dist/
+main.js
+
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
