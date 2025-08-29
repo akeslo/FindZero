@@ -7,17 +7,44 @@ interface FileSnippet {
     selected: boolean;
 }
 
+interface MDCleanerSettings {
+	debugOutput: boolean;
+	runAtStartup: boolean;
+	journalTemplate: string;
+}
+
 export class ScanModal extends Modal {
     private fileSnippets: FileSnippet[] = [];
     private selectedCount: number = 0;
     private batchDeleteButtonEl: HTMLButtonElement;
+    private settings: MDCleanerSettings;
 
-    constructor(app: App) {
+    constructor(app: App, settings: MDCleanerSettings) {
         super(app);
+        this.settings = settings;
     }
 
     onOpen() {
         this.scanVaultFiles();
+    }
+
+    private isUnfilledJournalTemplate(content: string): boolean {
+        if (!this.settings.journalTemplate || this.settings.journalTemplate.trim() === '') {
+            return false;
+        }
+
+        // Normalize whitespace for comparison
+        const normalizeWhitespace = (text: string) => text.replace(/\s+/g, ' ').trim();
+        
+        const normalizedContent = normalizeWhitespace(content);
+        const normalizedTemplate = normalizeWhitespace(this.settings.journalTemplate);
+        
+        if (this.settings.debugOutput) {
+            console.log('Comparing content:', normalizedContent);
+            console.log('With template:', normalizedTemplate);
+        }
+        
+        return normalizedContent === normalizedTemplate;
     }
 
     async scanVaultFiles() {
@@ -54,7 +81,8 @@ export class ScanModal extends Modal {
                 const nonBlankLines = lines.slice(1).filter(line => line.trim().length > 0).length;
                 
                 // Consider a file blank if there's essentially no content after the title line
-                const isBlank = contentLength === 0 || nonBlankLines === 0;
+                // OR if it matches the unfilled journal template
+                const isBlank = contentLength === 0 || nonBlankLines === 0 || this.isUnfilledJournalTemplate(content);
                 
                 if (isBlank) {
                     this.fileSnippets.push({
