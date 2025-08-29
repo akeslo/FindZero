@@ -73,16 +73,47 @@ export class ScanModal extends Modal {
                 // Extract the first line as title
                 const title = lines.length > 0 ? lines[0].trim() : file.basename;
                 
-                // Remove the title line from the content assessment
-                const contentWithoutTitle = lines.slice(1).join('\n').trim();
-                const contentLength = contentWithoutTitle.length;
+                // Check if file is completely empty or only whitespace
+                const trimmedContent = content.trim();
+                let isBlank: boolean;
+                let contentLength: number;
+                let nonBlankLines: number;
                 
-                // Count non-blank lines after the title line
-                const nonBlankLines = lines.slice(1).filter(line => line.trim().length > 0).length;
+                // Always check for journal template match first, regardless of other content
+                const isJournalTemplate = this.isUnfilledJournalTemplate(content);
                 
-                // Consider a file blank if there's essentially no content after the title line
-                // OR if it matches the unfilled journal template
-                const isBlank = contentLength === 0 || nonBlankLines === 0 || this.isUnfilledJournalTemplate(content);
+                if (trimmedContent === '') {
+                    // Completely empty file
+                    isBlank = true;
+                    contentLength = 0;
+                    nonBlankLines = 0;
+                } else if (isJournalTemplate) {
+                    // File matches journal template - always consider blank
+                    isBlank = true;
+                    contentLength = content.length;
+                    nonBlankLines = lines.filter(line => line.trim().length > 0).length;
+                } else {
+                    // Remove the title line from the content assessment only if there is content
+                    const contentWithoutTitle = lines.slice(1).join('\n').trim();
+                    contentLength = contentWithoutTitle.length;
+                    
+                    // Count non-blank lines after the title line
+                    nonBlankLines = lines.slice(1).filter(line => line.trim().length > 0).length;
+                    
+                    // Consider a file blank if there's essentially no content after the title line
+                    isBlank = contentLength === 0 || nonBlankLines === 0;
+                }
+                
+                // Debug logging
+                if (this.settings.debugOutput) {
+                    console.log(`File: ${file.path}`);
+                    console.log(`Content length: ${contentLength}`);
+                    console.log(`Non-blank lines: ${nonBlankLines}`);
+                    console.log(`Is journal template: ${isJournalTemplate}`);
+                    console.log(`Is blank: ${isBlank}`);
+                    console.log(`Full content: "${content}"`);
+                    console.log('---');
+                }
                 
                 if (isBlank) {
                     this.fileSnippets.push({
