@@ -44,7 +44,48 @@ export class ScanModal extends Modal {
             console.log('With template:', normalizedTemplate);
         }
         
-        return normalizedContent === normalizedTemplate;
+        // Check if the file contains the template (allowing for additional content above/below)
+        // But also verify that the template sections don't have filled-in content
+        const containsTemplate = normalizedContent.includes(normalizedTemplate);
+        
+        if (containsTemplate) {
+            // Additional check: look for signs that the template has been filled in
+            // Check for content after the template prompts (basic heuristic)
+            const templateLines = this.settings.journalTemplate.split('\n');
+            let hasFilledContent = false;
+            
+            for (const templateLine of templateLines) {
+                const trimmedLine = templateLine.trim();
+                // Look for template prompt lines that should remain empty
+                if (trimmedLine.endsWith(':') || trimmedLine.endsWith('...')) {
+                    // Find this line in the actual content and see if there's content after it
+                    const contentLines = content.split('\n');
+                    for (let i = 0; i < contentLines.length; i++) {
+                        const contentLine = contentLines[i].trim();
+                        if (contentLine === trimmedLine) {
+                            // Check if the next line or same line has additional content
+                            if (i + 1 < contentLines.length) {
+                                const nextLine = contentLines[i + 1].trim();
+                                if (nextLine && !nextLine.startsWith('#') && !nextLine.startsWith('-') && 
+                                    !nextLine.startsWith('```') && !nextLine.startsWith('---')) {
+                                    hasFilledContent = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (this.settings.debugOutput) {
+                console.log('Contains template:', containsTemplate);
+                console.log('Has filled content:', hasFilledContent);
+            }
+            
+            return !hasFilledContent;
+        }
+        
+        return false;
     }
 
     async scanVaultFiles() {
@@ -53,8 +94,11 @@ export class ScanModal extends Modal {
         contentEl.empty();
         contentEl.createEl('h2', { text: 'Scanning for blank notes...' });
         
-        // Get all markdown files in the vault
-        const markdownFiles = this.app.vault.getMarkdownFiles();
+        // Get all markdown files in the vault, excluding template directories
+        const markdownFiles = this.app.vault.getMarkdownFiles().filter(file => 
+            !file.path.startsWith('zTemplates/') && 
+            !file.path.includes('/zTemplates/')
+        );
         
         // Add a loading indicator
         const loadingDiv = contentEl.createDiv({ cls: 'loading' });
